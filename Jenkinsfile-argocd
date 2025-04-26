@@ -105,8 +105,8 @@ pipeline {
                     // Clone the repo that holds your Helm charts
                     withCredentials([string(credentialsId: "${GIT_CREDENTIALS_ID}", variable: 'GIT_TOKEN')]) {
                         sh """
-                            rm -rf ${DEPLOY_REPO_DIR}
-                            git clone ${DEPLOY_REPO} ${DEPLOY_REPO_DIR}
+                            rm -rf \${DEPLOY_REPO_DIR}
+                            git clone \${DEPLOY_REPO} \${DEPLOY_REPO_DIR}
                             cd \${DEPLOY_REPO_DIR}
 
                             // Kiểm tra xem đang deploy môi trường nào (dev/staging)
@@ -120,16 +120,16 @@ pipeline {
 
                             // Cập nhật file Chart.yaml
                             DEPLOY_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-                            sed -i "s|^description:.*|description: Deployed at ${DEPLOY_TIME}|" ${TARGET_ENV}/Chart.yaml
+                            sed -i "s|^description:.*|description: Deployed at \${DEPLOY_TIME}|" \${TARGET_ENV}/Chart.yaml
 
                             // Cập nhật image tag trong values.yaml
-                            sed -i "s|tag:.*|tag: \\\"${IMAGE_TAG}\\\"|" ${TARGET_ENV}/values.yaml
+                            sed -i "s|tag:.*|tag: \\\"\${IMAGE_TAG}\\\"|" \${TARGET_ENV}/values.yaml
 
                             git config user.email "vindiviet@gmail.com"
                             git config user.name "Vind1Viet"
-                            git remote set-url origin https://username:${GIT_TOKEN}@github.com/Vind1Viet/argo-cd.git
-                            git add ${TARGET_ENV}/Chart.yaml ${TARGET_ENV}/values.yaml
-                            git commit -m "Update Chart.yaml and values.yaml for ${TARGET_ENV} environment at ${DEPLOY_TIME}"
+                            git remote set-url origin https://username:\${GIT_TOKEN}@github.com/Vind1Viet/argo-cd.git
+                            git add \${TARGET_ENV}/Chart.yaml \${TARGET_ENV}/values.yaml
+                            git commit -m "Update Chart.yaml and values.yaml for \${TARGET_ENV} environment at \${DEPLOY_TIME}"
                             git push origin main
                         """
                     }
