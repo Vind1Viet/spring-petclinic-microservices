@@ -106,7 +106,7 @@ pipeline {
                     withCredentials([string(credentialsId: "${GIT_CREDENTIALS_ID}", variable: 'GIT_TOKEN')]) {
                         sh """
                             rm -rf ${DEPLOY_REPO_DIR}
-                            git clone ${DEPLOY_REPO} ${DEPLOY_REPO_DIR}
+                            git clone ${DEPLOY_REPO} 
                             cd ${DEPLOY_REPO_DIR}
 
                             // Kiểm tra xem đang deploy môi trường nào (dev/staging)
