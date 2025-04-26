@@ -104,13 +104,13 @@ pipeline {
 
                     // Clone the repo that holds your Helm charts
                     withCredentials([string(credentialsId: "${GIT_CREDENTIALS_ID}", variable: 'GIT_TOKEN')]) {
-                        sh """
+                        sh '''
                             rm -rf ${DEPLOY_REPO_DIR}
                             git clone ${DEPLOY_REPO} ${DEPLOY_REPO_DIR}
                             cd ${DEPLOY_REPO_DIR}
 
                             // Kiểm tra xem đang deploy môi trường nào (dev/staging)
-                            if [[ -n "${env.GIT_TAG}" ]]; then
+                            if [ -n "${env.GIT_TAG}" ]; then
                                 echo "Deploying to staging environment"
                                 TARGET_ENV="staging"
                             else
@@ -131,7 +131,7 @@ pipeline {
                             git add ${TARGET_ENV}/Chart.yaml ${TARGET_ENV}/values.yaml
                             git commit -m "Update Chart.yaml and values.yaml for ${TARGET_ENV} environment at ${DEPLOY_TIME}"
                             git push origin main
-                        """
+                        '''
                     }
                 }
             }
