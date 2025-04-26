@@ -119,7 +119,7 @@ pipeline {
                             fi
 
                             // Cập nhật file Chart.yaml
-                            DEPLOY_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+                            DEPLOY_TIME=`date "+%Y-%m-%d %H:%M:%S"`
                             sed -i "s|^description:.*|description: Deployed at ${DEPLOY_TIME}|" ${TARGET_ENV}/Chart.yaml
 
                             // Cập nhật image tag trong values.yaml
