@@ -9,7 +9,7 @@ config-server:
     type: NodePort
     port: 8888
     targetPort: 8888
-    nodePort: 30000
+    nodePort: 30008
 
 discovery-server:
   replicaCount: 1
@@ -22,7 +22,7 @@ discovery-server:
     type: NodePort
     port: 8761
     targetPort: 8761
-    nodePort: 30001
+    nodePort: 30009
 
 admin-server:
   replicaCount: 1
@@ -35,7 +35,7 @@ admin-server:
     type: NodePort
     port: 9090
     targetPort: 9090
-    nodePort: 30002
+    nodePort: 30010
 
 api-gateway:
   replicaCount: 1
@@ -48,7 +48,7 @@ api-gateway:
     type: NodePort
     port: 8080
     targetPort: 8080
-    nodePort: 30003
+    nodePort: 30011
 
 customers-service:
   replicaCount: 1
