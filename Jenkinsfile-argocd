@@ -52,14 +52,19 @@ pipeline {
                         changedFiles.split('\n').any { it.startsWith("${service}/") }
                     }
 
-                    if (servicesToBuild.isEmpty() && !env.GIT_TAG) {
+                    if (env.GIT_TAG){
+                        env.SERVICES_TO_BUILD = servicesList.join(',')
+                        echo "Building all services for tag: ${env.SERVICES_TO_BUILD}"
+                    }
+                    else if (servicesToBuild.isEmpty() && !env.GIT_TAG) {
                         echo "No changes in any services. Skipping build."
                         currentBuild.result = 'SUCCESS'
                         return
                     }
-
-                    env.SERVICES_TO_BUILD = servicesToBuild.join(',')
-                    echo "Services to build: ${env.SERVICES_TO_BUILD}"
+                    else {  
+                        env.SERVICES_TO_BUILD = servicesToBuild.join(',')
+                        echo "Services to build: ${env.SERVICES_TO_BUILD}"
+                    }
                 }
             }
         }
@@ -121,7 +126,9 @@ pipeline {
                                     sed -i "s|^description:.*|description: Deployed at ${deployTime}|" ${targetEnv}/Chart.yaml
 
                                     # Update values.yaml
-                                    sed -i "s|tag:.*|tag: \\\"${IMAGE_TAG}\\\"|" ${targetEnv}/values.yaml
+                                    for service in ${env.SERVICES_TO_BUILD}; do
+                                        sed -i "s|^  \${service}:.*|  \${service}: \\\"${IMAGE_TAG}\\\"|" ${targetEnv}/values.yaml
+                                    done
 
                                     git config user.email "vindiviet@gmail.com"
                                     git config user.name "Vind1Viet"
