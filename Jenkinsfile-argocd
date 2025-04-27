@@ -127,12 +127,32 @@ pipeline {
                                 """
 
                                 // Update values.yaml
+                                def serviceNameMapping = [
+                                    'spring-petclinic-genai-service': 'genai-service',
+                                    'spring-petclinic-visits-service': 'visits-service',
+                                    'spring-petclinic-vets-service': 'vets-service',
+                                    'spring-petclinic-customers-service': 'customers-service',
+                                    'spring-petclinic-config-server': 'config-server',
+                                    'spring-petclinic-discovery-server': 'discovery-server',
+                                    'spring-petclinic-admin-server': 'admin-server',
+                                    'spring-petclinic-api-gateway': 'api-gateway'
+                                ]
+
+                                // Update values.yaml for each service in SERVICES_TO_BUILD
                                 if (env.SERVICES_TO_BUILD?.trim()) {
-                                    def servicesList = env.SERVICES_TO_BUILD.split(',')
-                                    servicesList.each { service ->
-                                        sh """
-                                            sed -i "s|^${service}:.*|${service}: {tag: \\\"${IMAGE_TAG}\\\"}|" ${targetEnv}/values.yaml
-                                        """
+                                    echo "Updating tags for services: ${env.SERVICES_TO_BUILD}"
+                                    env.SERVICES_TO_BUILD.split(',').each { service ->
+                                        // Map service name to the correct format in values.yaml
+                                        def yamlServiceName = serviceNameMapping[service]
+
+                                        // Ensure we are updating the correct service tag in values.yaml
+                                        if (yamlServiceName) {
+                                            sh """
+                                                sed -i "s|${yamlServiceName}:.*tag:.*|${yamlServiceName}:\\n    tag: \\\"${IMAGE_TAG}\\\"|" ${targetEnv}/values.yaml
+                                            """
+                                        } else {
+                                            echo "No matching service name found for ${service}"
+                                        }
                                     }
                                 } else {
                                     echo "No services to update"
