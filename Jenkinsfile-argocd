@@ -23,6 +23,9 @@ pipeline {
             steps {
                 script {
                     checkout scm
+
+                    sh 'git fetch --tags'
+
                     env.GIT_COMMIT_ID = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
 
                     // Kiểm tra nếu build từ TAG hay từ branch
