@@ -52,7 +52,7 @@ pipeline {
                         changedFiles.split('\n').any { it.startsWith("${service}/") }
                     }
 
-                    if (servicesToBuild.isEmpty()) {
+                    if (servicesToBuild.isEmpty() && !env.GIT_TAG) {
                         echo "No changes in any services. Skipping build."
                         currentBuild.result = 'SUCCESS'
                         return
