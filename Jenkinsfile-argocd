@@ -108,19 +108,18 @@ pipeline {
                             rm -rf ${DEPLOY_REPO_DIR}
                             git clone ${DEPLOY_REPO} ${DEPLOY_REPO_DIR}
                             cd ${DEPLOY_REPO_DIR}
-                        """
 
-                        if [ -n "${env.GIT_TAG}" ]; then
-                            echo "Deploying to staging environment"
-                            TARGET_ENV="staging"
-                        else
-                            echo "Deploying to dev environment"
-                            TARGET_ENV="dev"
-                        fi
-                        def DEPLOY_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+                            // Kiểm tra xem đang deploy môi trường nào (dev/staging)
+                            if [ -n "${env.GIT_TAG}" ]; then
+                                echo "Deploying to staging environment"
+                                TARGET_ENV="staging"
+                            else
+                                echo "Deploying to dev environment"
+                                TARGET_ENV="dev"
+                            fi
 
-                        sh """
                             // Cập nhật file Chart.yaml
+                            DEPLOY_TIME=$(date "+%Y-%m-%d %H:%M:%S")
                             sed -i "s|^description:.*|description: Deployed at ${DEPLOY_TIME}|" ${TARGET_ENV}/Chart.yaml
 
                             // Cập nhật image tag trong values.yaml
