@@ -126,11 +126,14 @@ pipeline {
                                     sed -i "s|^description:.*|description: Deployed at ${deployTime}|" ${targetEnv}/Chart.yaml
 
                                     # Update values.yaml
-                                    ${env.SERVICES_TO_BUILD.split(',').collect { service ->
-                                        return """
-                                            sed -i "s|^${service}:.*|${service}: {tag: \\\"${IMAGE_TAG}\\\"}|" ${targetEnv}/values.yaml
-                                        """
-                                    }.join('\n')}
+                                    if [ -n "${env.SERVICES_TO_BUILD}" ]; then
+                                        # Cập nhật tag cho các service cần build trong values.yaml
+                                        ${env.SERVICES_TO_BUILD.split(',').collect { service ->
+                                            return """
+                                                sed -i "s|^${service}:.*|${service}: {tag: \\\"${IMAGE_TAG}\\\"}|" ${targetEnv}/values.yaml
+                                            """
+                                        }.join('\n')}
+                                    fi
                                     
                                     git config user.email "vindiviet@gmail.com"
                                     git config user.name "Vind1Viet"
